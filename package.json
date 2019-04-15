@@ -1,0 +1,19 @@
+{
+  "name": "reduplicator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "keywords": [],
+  "author": "Mikhail Dudin",
+  "license": "ISC",
+  "scripts": {
+    "test": "tsc & node ./node_modules/mocha/bin/mocha ./lib/test/tests.js"
+  },
+  "dependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.12.18",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.3"
+  }
+}
