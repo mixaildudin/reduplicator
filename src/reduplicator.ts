@@ -13,12 +13,12 @@ export default class Reduplicator {
         "а": "е",
         "е": "е",
         "ё": "ё",
-        "и": "и",
+        "и": "е",
         "о": "е",
         "у": "е",
-        "ы": "и",
+        "ы": "е",
         "э": "е",
-        "ю": "ю",
+        "ю": "е",
         "я": "е"
     };
 
@@ -52,6 +52,7 @@ export default class Reduplicator {
             return null;
         }
 
+        word = word.toLowerCase();
         const wordLetters = word.split('');
 
         const syllableCount = this.getSyllableCount(wordLetters);

@@ -17,6 +17,11 @@ describe('Reduplicator', () => {
             expect(r.reduplicate('баунти')).to.equal('хуяунти');
         });
 
+        it('should correctly reduplicate words with capital letters', () => {
+            expect(r.reduplicate('Умный')).to.equal('хуюмный');
+            expect(r.reduplicate('ПРИвет')).to.equal('хуевет');
+        });
+
         it('should correctly reduplicate single-syllable words', () => {            
             expect(r.reduplicate('кот')).to.equal('хуекот');
             expect(r.reduplicate('пёс')).to.equal('хуепёс');
