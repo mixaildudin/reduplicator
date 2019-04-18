@@ -12,7 +12,7 @@ export default class Reduplicator {
     private readonly defaultVowelPairs: { [letter: string]: string } = {
         "а": "е",
         "е": "е",
-        "ё": "ё",
+        "ё": "е",
         "и": "е",
         "о": "е",
         "у": "е",
