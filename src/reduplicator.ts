@@ -1,12 +1,11 @@
 import * as fs from 'fs';
 
 declare type StressDictionary = { [word: string]: number };
-declare type LetterSet = { [letter: string]: number };
 
 export default class Reduplicator {
     private readonly minWordLength = 3;
-    private readonly vowels: LetterSet;
-    private readonly consonants: LetterSet;
+    private readonly vowels: Set<string>;
+    private readonly consonants: Set<string>;
     private readonly dict: StressDictionary;
 
     private readonly defaultVowelPairs: { [letter: string]: string } = {
@@ -40,8 +39,8 @@ export default class Reduplicator {
     private readonly singleSyllableWordPrefix = 'хуе';
 
     constructor(stressDictPath: string) {
-        this.vowels = this.createLetterSet('аеёиоуыэюя'.split(''));
-        this.consonants = this.createLetterSet('бвгджзйклмнпрстфхцчшщ'.split(''));
+        this.vowels = new Set<string>('аеёиоуыэюя'.split(''));
+        this.consonants = new Set<string>('бвгджзйклмнпрстфхцчшщ'.split(''));
 
         const dictContent = fs.readFileSync(stressDictPath);
         this.dict = <StressDictionary>JSON.parse(dictContent.toString());
@@ -66,9 +65,9 @@ export default class Reduplicator {
             const curLetter = wordLetters[i];
             const nextLetter = wordLetters[i + 1];
 
-            if (curLetter in this.vowels) {
+            if (this.vowels.has(curLetter)) {
                 // если буква ударная или за ней идет согласная, редуплицируем
-                if (knownStressedLetterIdx === i || nextLetter in this.consonants) {
+                if (knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
                     return this.prefix + this.getVowelPair(word, curLetter, i, knownStressedLetterIdx) + word.substring(i + 1);
                 }
             }
@@ -78,22 +77,12 @@ export default class Reduplicator {
     }
 
     private getSyllableCount(wordLetters: string[]): number {
-        return wordLetters.filter(x => x in this.vowels).length;
+        return wordLetters.filter(x => this.vowels.has(x)).length;
     }
 
     private getVowelPair(word: string, vowel: string, vowelIdx: number, knownStressedLetterIdx: number): string {
         return (knownStressedLetterIdx === undefined || knownStressedLetterIdx === vowelIdx 
             ? this.stressedVowelPairs[vowel] 
             : this.defaultVowelPairs[vowel]);
-    }
-
-    private createLetterSet(letters: string[]): LetterSet {
-        const result: LetterSet = {};
-        
-        letters.forEach(letter => {
-            result[letter] = 1;
-        });
-
-        return result;
     }
 }
