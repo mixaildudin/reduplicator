@@ -7,9 +7,9 @@ const rl = readline.createInterface({
     output: process.stdout
   });
 
-const r = new Reduplicator('./lib/dict.json');
+const r = new Reduplicator('./dict/dict.json');
 
-console.log('Reduplicator CLI');
+console.log('Reduplicator REPL');
 
 rl.on('line', (input) => {
     console.log(r.reduplicate(input));

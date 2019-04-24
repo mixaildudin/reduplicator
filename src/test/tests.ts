@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import Reduplicator from '../reduplicator';
 
 describe('Reduplicator', () => {
-    const r = new Reduplicator('./src/dict/dict.json');
+    const r = new Reduplicator('./dict/dict.json');
 
     describe('#reduplicate', () => {
         it('should correctly reduplicate words from the dictionary', () => {            
