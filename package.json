@@ -7,7 +7,8 @@
   "author": "Mikhail Dudin",
   "license": "ISC",
   "scripts": {
-    "test": "tsc & node ./node_modules/mocha/bin/mocha ./lib/test/tests.js"
+    "test": "tsc & node ./node_modules/mocha/bin/mocha ./lib/test/tests.js",
+    "cli": "tsc & node ./lib/cli.js"
   },
   "dependencies": {
     "@types/chai": "^4.1.7",
