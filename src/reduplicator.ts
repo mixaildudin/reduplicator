@@ -13,6 +13,9 @@ export default class Reduplicator {
     private readonly consonants: Set<string>;
     private readonly dict: StressDictionary;
 
+    private customDictPath: string;
+    private customDict: StressDictionary;
+
     private readonly defaultVowelPairs: { [letter: string]: string } = {
         "а": "е",
         "е": "е",
@@ -43,12 +46,21 @@ export default class Reduplicator {
 
     private readonly singleSyllableWordPrefix = 'хуе';
 
-    constructor(stressDictPath: string) {
+    constructor(stressDictPath: string, customDictPath?: string) {
         this.vowels = new Set<string>('аеёиоуыэюя'.split(''));
         this.consonants = new Set<string>('бвгджзйклмнпрстфхцчшщ'.split(''));
 
+        this.customDictPath = customDictPath;
+        
         const dictContent = fs.readFileSync(stressDictPath);
-        this.dict = <StressDictionary>JSON.parse(dictContent.toString());
+        this.dict = JSON.parse(dictContent.toString());
+
+        if (customDictPath && fs.existsSync(customDictPath)) {
+            const content = fs.readFileSync(customDictPath);
+            this.customDict = JSON.parse(content.toString());
+
+            Object.assign(this.dict, this.customDict);
+        }
     }
 
     reduplicate(word: string): string {
@@ -56,16 +68,23 @@ export default class Reduplicator {
             return null;
         }
 
-        word = word.toLowerCase();
-        const wordLetters = word.split('');
+        const lowercasedWord = word.toLowerCase();
 
-        const syllableCount = this.getSyllableCount(wordLetters);
+        const wordLetters = word.split('');
+        const lowercasedWordLetters = lowercasedWord.split('');
+
+        const syllableCount = this.getSyllableCount(lowercasedWordLetters);
         if (syllableCount === 0) {
             return null;
         }
 
         if (syllableCount === 1) {
-            return this.singleSyllableWordPrefix + word;
+            return this.singleSyllableWordPrefix + lowercasedWord;
+        }
+
+        const shouldSaveCustomStress = this.customDictPath && wordLetters.some(this.isUpperCase);
+        if (shouldSaveCustomStress) {
+            this.saveCustomStress(wordLetters, this.customDictPath);
         }
 
         const stressInfo = this.getStressInfo(word);
@@ -73,10 +92,10 @@ export default class Reduplicator {
         // слова из двух слогов и слова с ударением на первый слог редуплицируем дефолтным алгоритмом.
         // от слов с 3 и менее слогами отрезается слишком много, поэтому слова с неизвестным ударением и в которых менее трех слогов
         // тоже обрабатываем дефолтным алгоритмом
-        if (syllableCount === 2 || (stressInfo && stressInfo.syllableNumber === 1) || (!stressInfo && syllableCount <= 3)) {
-            return this.reduplicateSimply(wordLetters, stressInfo);
+        if (syllableCount === 2 || (stressInfo && stressInfo.syllableNumber === 0) || (!stressInfo && syllableCount <= 3)) {
+            return this.reduplicateSimply(lowercasedWordLetters, stressInfo);
         } else {
-            return this.reduplicateAdvanced(wordLetters, stressInfo);
+            return this.reduplicateAdvanced(lowercasedWordLetters, stressInfo);
         }
     }
 
@@ -91,12 +110,14 @@ export default class Reduplicator {
     }
 
     private getStressInfo(word: string): WordStressInfo {
+        word = word.toLowerCase();
+
         const letterNumber = this.dict[word] || this.dict[word.replace(/ё/g, 'е')];
         if (letterNumber == null) return null;
 
-        const syllableNumber = this.getSyllableCount(word.substring(0, letterNumber + 1).split(''));
+        const syllableNumber = this.getSyllableCount(word.substring(0, letterNumber + 1).split('')) - 1;
 
-        return { letterNumber, syllableNumber }
+        return { letterNumber, syllableNumber };
     }
 
     private reduplicateSimply(wordLetters: string[], stressInfo: WordStressInfo): string {
@@ -134,7 +155,30 @@ export default class Reduplicator {
             }
         }
 
-        const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableNumber === prefixSyllableCount);
+        const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableNumber === prefixSyllableCount - 1);
         return this.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
+    }
+
+    private isUpperCase(c: string): boolean {
+        return c && (c === c.toUpperCase());
+    }
+
+    private saveCustomStress(wordLetters: string[], customDictPath: string): void {
+        const isVowelStressedPredicate = (letter: string) => this.vowels.has(letter.toLowerCase()) && this.isUpperCase(letter);
+
+        const stressedVowels = wordLetters.filter(isVowelStressedPredicate);
+        if (stressedVowels.length !== 1) {
+            return;
+        }
+
+        const word = wordLetters.join('').toLowerCase();
+        const stressedLetterIdx = wordLetters.findIndex(isVowelStressedPredicate);
+
+        if (!this.customDict) {
+            this.customDict = {};
+        }
+
+        this.dict[word] = this.customDict[word] = stressedLetterIdx;
+        fs.writeFileSync(customDictPath, JSON.stringify(this.customDict, null, 2), { encoding: 'UTF8' });
     }
 }

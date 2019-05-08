@@ -7,7 +7,7 @@ const rl = readline.createInterface({
     output: process.stdout
   });
 
-const r = new Reduplicator('./dict/dict.json');
+const r = new Reduplicator('./dict/dict.json', './dict/custom.json');
 
 console.log('Reduplicator REPL');
 
