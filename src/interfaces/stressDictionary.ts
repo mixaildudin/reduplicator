@@ -1,0 +1,1 @@
+export declare type StressDictionary = { [word: string]: number };
