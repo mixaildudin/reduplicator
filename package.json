@@ -1,20 +1,35 @@
 {
   "name": "reduplicator",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/app.js",
-  "keywords": [],
-  "author": "Mikhail Dudin",
-  "license": "ISC",
+  "description": "Lexical reduplicator for russian words",
+  "keywords": [
+    "russian",
+    "reduplicator",
+    "lexical",
+    "swear",
+    "strict language"
+  ],
+  "author": {
+    "name": "Mikhail Dudin",
+    "email": "dudin-m@live.ru"
+  },
+  "license": "MIT",
   "scripts": {
     "test": "tsc & node ./node_modules/mocha/bin/mocha ./lib/test/tests.js",
     "repl": "tsc & node ./lib/repl.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.18",
     "chai": "^4.2.0",
-    "mocha": "^6.1.3"
-  }
+    "mocha": "^6.1.3",
+    "typescript": "^3.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mixaildudin/reduplicator"
+  },
+  "main": "lib/reduplicator.js",
+  "types": "lib/reduplicator.d.ts"
 }
