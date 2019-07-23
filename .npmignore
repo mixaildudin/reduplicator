@@ -2,3 +2,5 @@ src/
 .gitignore
 tsconfig.json
 node_modules
+lib/dict-transformer/
+lib/test/

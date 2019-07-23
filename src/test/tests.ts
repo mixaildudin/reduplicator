@@ -16,7 +16,6 @@ describe('Reduplicator', () => {
 			expect(r.reduplicate('яишница')).to.equal('хуишница');
 			expect(r.reduplicate('поезд')).to.equal('хуёезд');
 			expect(r.reduplicate('поезда')).to.equal('хуезда');
-			expect(r.reduplicate('баунти')).to.equal('хуяунти');
 
 			expect(r.reduplicate('горка')).to.equal('хуёрка');
 			expect(r.reduplicate('доска')).to.equal('хуеска');
