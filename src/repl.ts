@@ -9,8 +9,8 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
-const dict = new DefaultStressDictionaryManager('./dict/dict.json');
-// const dict = new CustomDictionaryManager('./dict/dict.json', './dict/custom.json');
+const dict = new DefaultStressDictionaryManager();
+// const dict = new CustomDictionaryManager('./dict/custom.json');
 const r = new Reduplicator(dict);
 
 console.log('Reduplicator REPL');

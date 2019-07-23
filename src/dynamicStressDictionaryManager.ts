@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { StressDictionaryManager } from "./interfaces/stressDictionaryManager";
 import { StressDictionary } from "./interfaces/stressDictionary";
 import AlphabetHelper from './alphabetHelper';
@@ -10,7 +11,9 @@ export default class DynamicStressDictionaryManager implements StressDictionaryM
 	private customDictPath: string;
 	private customDict: StressDictionary;
 
-	constructor(stressDictionaryPath: string, customDictionaryPath: string) {
+	constructor(customDictionaryPath: string) {
+		const stressDictionaryPath = path.join(__dirname, '../dict/dict.json');
+
 		const dictContent = fs.readFileSync(stressDictionaryPath);
 		this.dict = JSON.parse(dictContent.toString());
 

@@ -4,7 +4,7 @@ import Reduplicator from '../reduplicator';
 import DefaultStressDictionaryManager from '../defaultStressDictionaryManager';
 
 describe('Reduplicator', () => {
-	const dict = new DefaultStressDictionaryManager('./dict/dict.json');
+	const dict = new DefaultStressDictionaryManager();
 	const r = new Reduplicator(dict);
 
 	describe('#reduplicate', () => {
