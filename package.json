@@ -1,6 +1,6 @@
 {
   "name": "reduplicator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lexical reduplicator for russian words",
   "keywords": [
     "russian",
