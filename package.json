@@ -4,10 +4,11 @@
   "description": "Lexical reduplicator for russian words",
   "keywords": [
     "russian",
-    "reduplicator",
     "lexical",
     "swear",
-    "strict language"
+    "strict language",
+    "русский мат",
+    "лексическая редупликация"
   ],
   "author": {
     "name": "Mikhail Dudin",
