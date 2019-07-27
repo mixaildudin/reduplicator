@@ -3,7 +3,7 @@ import * as path from 'path';
 import { StressManager } from "./interfaces/stressManager";
 import { StressDictionary } from "./interfaces/stressDictionary";
 
-export default class DefaultStressManager implements StressManager {
+export class DefaultStressManager implements StressManager {
 	private readonly dict: StressDictionary;
 
 	constructor() {

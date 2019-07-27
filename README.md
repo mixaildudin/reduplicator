@@ -42,8 +42,11 @@
 
 Можно написать свою реализацию с произвольной логикой.
 
-**Самый простой вариант использования:**
+**Самый простой вариант использования в JavaScript:**
 ```javascript
+const DefaultStressManager = require('reduplicator/lib/defaultStressManager').DefaultStressManager;
+const Reduplicator = require('reduplicator').Reduplicator;
+
 const dict = new DefaultStressManager();
 const r = new Reduplicator(dict);
 r.reduplicate('собака'); // => х*яка
@@ -95,3 +98,6 @@ r.reduplicate('сОбака'); // => х*ёбака
 
 ## Кредиты
 Словарь ударений составлен из словаря "Полная парадигма. Морфология. Частотный словарь. Совмещенный словарь. Автор М. Хаген", доступного [тут](http://www.speakrus.ru/dict/).
+
+## TODO
+Подумать над длинными require'ами, как их сделать покороче.

@@ -1,8 +1,8 @@
-import Reduplicator from './reduplicator';
+import {Reduplicator} from './reduplicator';
 
 import * as readline from 'readline';
-import DefaultStressManager from './defaultStressManager';
-import DynamicStressManager from './dynamicStressManager';
+import {DefaultStressManager} from './defaultStressManager';
+import {DynamicStressManager} from './dynamicStressManager';
 
 const rl = readline.createInterface({
 	input: process.stdin,

@@ -4,7 +4,7 @@ import { StressManager } from "./interfaces/stressManager";
 import { StressDictionary } from "./interfaces/stressDictionary";
 import AlphabetHelper from './alphabetHelper';
 
-export default class DynamicStressManager implements StressManager {
+export class DynamicStressManager implements StressManager {
 	private readonly dict: StressDictionary;
 	private readonly vowels: Set<string>;
 

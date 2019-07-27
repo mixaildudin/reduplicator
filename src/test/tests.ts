@@ -1,8 +1,8 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
-import Reduplicator from '../reduplicator';
-import DefaultStressManager from '../defaultStressManager';
-import DynamicStressManager from '../dynamicStressManager';
+import {Reduplicator} from '../reduplicator';
+import {DefaultStressManager} from '../defaultStressManager';
+import {DynamicStressManager} from '../dynamicStressManager';
 
 describe('Reduplicator with DefaultStressManager', () => {
 	const dict = new DefaultStressManager();

@@ -2,7 +2,7 @@ import WordStress from './interfaces/wordStress';
 import { StressManager } from './interfaces/stressManager';
 import AlphabetHelper from './alphabetHelper';
 
-export default class Reduplicator {
+export class Reduplicator {
 	private readonly minWordLength = 3;
 	private readonly vowels: Set<string>;
 	private readonly consonants: Set<string>;
