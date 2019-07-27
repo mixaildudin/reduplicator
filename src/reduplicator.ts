@@ -1,12 +1,12 @@
 import WordStress from './interfaces/wordStress';
-import { StressDictionaryManager } from './interfaces/stressDictionaryManager';
+import { StressManager } from './interfaces/stressManager';
 import AlphabetHelper from './alphabetHelper';
 
 export default class Reduplicator {
 	private readonly minWordLength = 3;
 	private readonly vowels: Set<string>;
 	private readonly consonants: Set<string>;
-	private readonly dictionaryManager: StressDictionaryManager;
+	private readonly dictionaryManager: StressManager;
 
 	private readonly defaultVowelPairs: { [letter: string]: string } = {
 		"а": "е",
@@ -38,7 +38,7 @@ export default class Reduplicator {
 
 	private readonly singleSyllableWordPrefix = 'хуе';
 
-	constructor(dictionaryManager: StressDictionaryManager) {
+	constructor(dictionaryManager: StressManager) {
 		this.vowels = new Set<string>(AlphabetHelper.getVowels());
 		this.consonants = new Set<string>(AlphabetHelper.getConsonants());
 
@@ -75,7 +75,7 @@ export default class Reduplicator {
 	}
 
 	private getSyllableCount(wordLetters: string[]): number {
-		return wordLetters.filter(x => this.vowels.has(x)).length;
+		return wordLetters.filter(x => this.vowels.has(x.toLowerCase())).length;
 	}
 
 	private getVowelPair(vowel: string, forStressedVowel: boolean): string {

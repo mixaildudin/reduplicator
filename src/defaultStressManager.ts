@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { StressDictionaryManager } from "./interfaces/stressDictionaryManager";
+import { StressManager } from "./interfaces/stressManager";
 import { StressDictionary } from "./interfaces/stressDictionary";
 
-export default class DefaultStressDictionaryManager implements StressDictionaryManager {
+export default class DefaultStressManager implements StressManager {
 	private readonly dict: StressDictionary;
 
 	constructor() {

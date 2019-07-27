@@ -1,16 +1,17 @@
 import Reduplicator from './reduplicator';
 
 import * as readline from 'readline';
-import DefaultStressDictionaryManager from './defaultStressDictionaryManager';
-import DynamicStressDictionaryManager from './dynamicStressDictionaryManager';
+import DefaultStressManager from './defaultStressManager';
+import DynamicStressManager from './dynamicStressManager';
 
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout
 });
 
-const dict = new DefaultStressDictionaryManager();
-// const dict = new CustomDictionaryManager('./dict/custom.json');
+// const dict = new DefaultStressManager();
+// const dict = new DynamicStressManager('./custom.json');
+const dict = new DynamicStressManager();
 const r = new Reduplicator(dict);
 
 console.log('Reduplicator REPL');
