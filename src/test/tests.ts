@@ -1,10 +1,11 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
 import Reduplicator from '../reduplicator';
-import DefaultStressDictionaryManager from '../defaultStressDictionaryManager';
+import DefaultStressManager from '../defaultStressManager';
+import DynamicStressManager from '../dynamicStressManager';
 
-describe('Reduplicator', () => {
-	const dict = new DefaultStressDictionaryManager();
+describe('Reduplicator with DefaultStressManager', () => {
+	const dict = new DefaultStressManager();
 	const r = new Reduplicator(dict);
 
 	describe('#reduplicate', () => {
@@ -64,6 +65,31 @@ describe('Reduplicator', () => {
 			expect(r.reduplicate('птрт')).to.be.null;
 			expect(r.reduplicate('а')).to.be.null;
 			expect(r.reduplicate('ад')).to.be.null;
+		});
+	});
+});
+
+describe('Reduplicator with DynamicStressManager', () => {
+	const dict = new DynamicStressManager();
+	const r = new Reduplicator(dict);
+
+	describe('#reduplicate', () => {
+		it('should correctly reduplicate words with custom stress', () => {
+			expect(r.reduplicate('собака')).to.equal('хуяка');
+			expect(r.reduplicate('сОбака')).to.equal('хуёбака');
+			expect(r.reduplicate('собакА')).to.equal('хуека');
+		});
+
+		it('should ignore ambiguous custom stress', () => {
+			expect(r.reduplicate('сОбАка')).to.equal('хуяка');
+			expect(r.reduplicate('хОлОдильник')).to.equal('хуедильник');
+		});
+
+		it('should not treat capital consonants as custom stress', () => {
+			expect(r.reduplicate('СобаКа')).to.equal('хуяка');
+			expect(r.reduplicate('СОбаКа')).to.equal('хуёбака');
+			expect(r.reduplicate('ХоЛоДиЛьНик')).to.equal('хуедильник');
+			expect(r.reduplicate('холодильниК')).to.equal('хуедильник');
 		});
 	});
 });
