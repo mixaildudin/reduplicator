@@ -43,7 +43,7 @@
 
 Можно написать свою реализацию с произвольной логикой.
 
-**Самый простой вариант использования в JavaScript:**
+#### Самый простой вариант использования
 ```javascript
 const DefaultStressManager = require('reduplicator').DefaultStressManager;
 const Reduplicator = require('reduplicator').Reduplicator;
@@ -53,6 +53,7 @@ const r = new Reduplicator(dict);
 r.reduplicate('собака'); // => х*яка
 ```
 
+#### Продвинутый вариант
 Если мы хотим использовать дефолтный словарь, но также иметь возможность указывать редупликатору правильные ударения в словах (подробнее о пользовательских ударениях - ниже):
 ```javascript
 const dict = new DynamicStressManager();
