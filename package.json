@@ -1,6 +1,6 @@
 {
   "name": "reduplicator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lexical reduplicator for russian words",
   "keywords": [
     "russian",
@@ -31,6 +31,6 @@
     "type": "git",
     "url": "https://github.com/mixaildudin/reduplicator"
   },
-  "main": "lib/reduplicator.js",
-  "types": "lib/reduplicator.d.ts"
+  "main": "lib/index.js",
+  "types": "lib/index"
 }
