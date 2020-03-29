@@ -1,6 +1,6 @@
 {
   "name": "reduplicator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Lexical reduplicator for russian words",
   "keywords": [
     "russian",
@@ -8,7 +8,9 @@
     "swear",
     "strict language",
     "русский мат",
-    "лексическая редупликация"
+    "лексическая редупликация",
+    "ругательства",
+    "русский язык"
   ],
   "author": {
     "name": "Mikhail Dudin",
