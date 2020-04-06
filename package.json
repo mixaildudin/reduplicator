@@ -1,7 +1,7 @@
 {
   "name": "reduplicator",
-  "version": "1.0.4",
-  "description": "Lexical reduplicator for russian words",
+  "version": "1.0.5",
+  "description": "Х*ефикатор русских слов",
   "keywords": [
     "russian",
     "lexical",
@@ -18,8 +18,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "tsc & node ./node_modules/mocha/bin/mocha ./lib/test/tests.js",
-    "repl": "tsc & node ./lib/repl.js"
+    "test": "tsc && mocha ./lib/test/tests.js",
+    "repl": "tsc && node ./lib/repl.js"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
