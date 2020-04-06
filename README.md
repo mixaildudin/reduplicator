@@ -1,7 +1,7 @@
 # Лексический редупликатор
 
-![npm](https://img.shields.io/npm/v/reduplicator)
-![npm](https://img.shields.io/npm/l/reduplicator)
+[![npm](https://img.shields.io/npm/v/reduplicator)](https://npmjs.com/package/reduplicator)
+[![npm](https://img.shields.io/npm/l/reduplicator)](https://github.com/mixaildudin/reduplicator/blob/master/LICENSE.md)
 
 **Внимание! Исходный код содержит ненормативную лексику!**
 Здесь и далее все нецензурные слова прикрыты звёздочками. Х*ёздочками.
