@@ -18,6 +18,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "test": "tsc && mocha ./lib/test/tests.js",
     "repl": "tsc && node ./lib/repl.js"
   },
