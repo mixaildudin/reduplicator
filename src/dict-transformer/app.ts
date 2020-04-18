@@ -4,7 +4,7 @@ import AlphabetHelper from '../alphabetHelper';
 
 (function() {
 	if (process.argv.length < 3) {
-		console.log('USAGE: node app.ts source.txt destination.json');
+		console.log('USAGE: node app.js source.txt destination.txt');
 		return;
 	}
 
@@ -33,7 +33,7 @@ import AlphabetHelper from '../alphabetHelper';
 		const stress = parts[2].trim();
 
 		processed++;
-		
+
 		if (word.startsWith('*')) word = word.substring(1);
 
 		if (!isWordToProcess(word)) {
@@ -48,23 +48,32 @@ import AlphabetHelper from '../alphabetHelper';
 			console.log(`Skipping word ${word} as no stress found`);
 			skipped++;
 			return;
-		};
+		}
 
 		const stressedLetterIdx = stressCharIdx - 1;
+
+		const firstVowelIdx = word.split('').findIndex(l => AlphabetHelper.getVowels().includes(l));
+		if (firstVowelIdx === stressedLetterIdx) {
+			console.log(`Skipping word ${word} because the first vowel is stressed`);
+			skipped++;
+			return;
+		}
 
 		result[word] = stressedLetterIdx;
 		added++;
 	});
 
 	lineReader.on('close', () => {
-		fs.writeFileSync(destination, JSON.stringify(result, null, 2));
+		const resultFileContent = Object.keys(result).map(word => `${word}:${result[word]}`).join('\n');
+		fs.writeFileSync(destination, resultFileContent, { encoding: 'utf8' });
 		console.log();
+
 		console.log('Done!');
 		console.log(`Processed ${processed}, added ${added}, skipped ${skipped}`);
 	});
 
 	function isWordToProcess(word: string): boolean {
 		return word.split('')
-			.every(c => c === stressChar || allowedChars.indexOf(c) >=0);
+			.every(c => c === stressChar || allowedChars.indexOf(c) >= 0);
 	}
 })();
