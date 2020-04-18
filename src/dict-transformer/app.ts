@@ -36,8 +36,20 @@ import AlphabetHelper from '../alphabetHelper';
 
 		if (word.startsWith('*')) word = word.substring(1);
 
-		if (!isWordToProcess(word)) {
+		if (!isValidWord(word)) {
 			console.log('Skipping word ' + word);
+			skipped++;
+			return;
+		}
+
+		if (word.length < 3) {
+			console.log('Skipping word ' + word + ' because it is too short');
+			skipped++;
+			return;
+		}
+
+		if (word.length > 17) {
+			console.log('Skipping word ' + word + ' because it is too long');
 			skipped++;
 			return;
 		}
@@ -64,7 +76,7 @@ import AlphabetHelper from '../alphabetHelper';
 	});
 
 	lineReader.on('close', () => {
-		const resultFileContent = Object.keys(result).map(word => `${word}:${result[word]}`).join('\n');
+		const resultFileContent = Object.keys(result).map(word => word + result[word]).join('\n');
 		fs.writeFileSync(destination, resultFileContent, { encoding: 'utf8' });
 		console.log();
 
@@ -72,7 +84,7 @@ import AlphabetHelper from '../alphabetHelper';
 		console.log(`Processed ${processed}, added ${added}, skipped ${skipped}`);
 	});
 
-	function isWordToProcess(word: string): boolean {
+	function isValidWord(word: string): boolean {
 		return word.split('')
 			.every(c => c === stressChar || allowedChars.indexOf(c) >= 0);
 	}
