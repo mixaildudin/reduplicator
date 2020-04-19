@@ -66,8 +66,8 @@ export class Reduplicator {
 
 		// слова из двух слогов и слова с ударением на первый слог редуплицируем дефолтным алгоритмом.
 		// от слов с 3 и менее слогами отрезается слишком много, поэтому слова с неизвестным ударением и в которых менее трех слогов
-		// тоже обрабатываем дефолтным алгоритмом
-		if (syllableCount === 2 || (stressInfo && stressInfo.syllableIdx === 0) || (!stressInfo && syllableCount <= 3)) {
+		// тоже обрабатываем простым алгоритмом
+		if (!stressInfo || syllableCount === 2 || (stressInfo && stressInfo.syllableIdx === 0) || (!stressInfo && syllableCount <= 3)) {
 			return this.reduplicateSimply(lowercasedWordLetters, stressInfo);
 		} else {
 			return this.reduplicateAdvanced(lowercasedWordLetters, stressInfo);
@@ -80,7 +80,7 @@ export class Reduplicator {
 
 	private getVowelPair(vowel: string, forStressedVowel: boolean): string {
 		return (forStressedVowel
-			? this.stressedVowelPairs[vowel] 
+			? this.stressedVowelPairs[vowel]
 			: this.defaultVowelPairs[vowel]);
 	}
 
@@ -91,7 +91,7 @@ export class Reduplicator {
 		const stressedSyllableIdx = this.getSyllableCount(word.substring(0, letterIdx + 1).split('')) - 1;
 
 		return {
-			letterIdx, 
+			letterIdx,
 			syllableIdx: stressedSyllableIdx
 		};
 	}
@@ -104,8 +104,7 @@ export class Reduplicator {
 			const nextLetter = wordLetters[i + 1];
 
 			if (this.vowels.has(curLetter)) {
-				// если буква ударная или за ней идет согласная, редуплицируем
-				if (knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
+				if (knownStressedLetterIdx == null || knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
 					return this.prefix + this.getVowelPair(curLetter, knownStressedLetterIdx == null || knownStressedLetterIdx === i ) + wordLetters.slice(i + 1).join('');
 				}
 			}

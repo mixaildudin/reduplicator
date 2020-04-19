@@ -1,7 +1,6 @@
 import {Reduplicator} from './reduplicator';
 
 import * as readline from 'readline';
-import {DefaultStressManager} from './defaultStressManager';
 import {DynamicStressManager} from './dynamicStressManager';
 
 const rl = readline.createInterface({
@@ -9,11 +8,13 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
-// const dict = new DefaultStressManager();
-// const dict = new DynamicStressManager('./custom.json');
+console.log('Initialization...');
+
 const dict = new DynamicStressManager();
 const r = new Reduplicator(dict);
 
+console.log('Ready!');
+console.log();
 console.log('Reduplicator REPL');
 
 rl.on('line', (input) => {

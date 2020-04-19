@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { StressManager } from "./interfaces/stressManager";
-import { StressDictionary } from "./interfaces/stressDictionary";
+import {StressManager} from "./interfaces/stressManager";
+import {StressDictionary} from "./interfaces/stressDictionary";
 import AlphabetHelper from './alphabetHelper';
+import {DictionaryReader} from './dictionaryReader';
 
 export class DynamicStressManager implements StressManager {
 	private readonly dict: StressDictionary;
@@ -13,10 +14,7 @@ export class DynamicStressManager implements StressManager {
 	private isCustomDictionaryReadOnly: boolean = false;
 
 	constructor(customDictionaryPath?: string, isCustomDictionaryReadOnly?: boolean) {
-		const stressDictionaryPath = path.join(__dirname, '../dict/dict.json');
-
-		const dictContent = fs.readFileSync(stressDictionaryPath);
-		this.dict = JSON.parse(dictContent.toString());
+		this.dict = DictionaryReader.read(path.join(__dirname, '../dict/dict.txt'));
 
 		this.isCustomDictionaryReadOnly = isCustomDictionaryReadOnly || false;
 
