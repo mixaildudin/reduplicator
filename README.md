@@ -27,24 +27,24 @@
 ### В коде
 #### Самый простой вариант использования
 ```javascript
-var DefaultStressManager = require('reduplicator').DefaultStressManager;
-var Reduplicator = require('reduplicator').Reduplicator;
+const DefaultStressManager = require('reduplicator').DefaultStressManager;
+const Reduplicator = require('reduplicator').Reduplicator;
 
-var dict = new DefaultStressManager();
-var r = new Reduplicator(dict);
+const dict = new DefaultStressManager();
+const r = new Reduplicator(dict);
 r.reduplicate('собака'); // => х*яка
 ```
 
-#### Как это все устроено и почему пакет весит 90Мб
+#### Как это все устроено и почему пакет весит 60Мб
 На то, какая будет гласная после префикса "ху" и сколько будет слогов в итоговом слове, влияет ударение в слове исходном. Пример:
 * собáка -> х\*яка
 * со́бака -> х\*ёбака
 
-Поэтому `reduplicator` внутри себя использует словарь ударений. **Словарь весит около 90Мб.**
+Поэтому `reduplicator` внутри себя использует словарь ударений. **Словарь весит около 60Мб.**
 Именно из-за этого и сам пакет весит так много.
 
 Редупликатору для работы нужна реализация [интерфейса](https://github.com/mixaildudin/reduplicator/blob/master/src/interfaces/stressManager.ts) `StressManager`. То есть *нечто, что умеет определять ударение в слове*. Сейчас таких реализаций написано две:
-* `DefaultStressManager` - работает со встроенным словарем в формате JSON
+* `DefaultStressManager` - работает со встроенным словарем ударений
 * `DynamicStressManager` - умеет работать со встроенным словарем, но ему также можно подсказать правильное ударение в слове
 
 В теории можно легко написать свою реализацию с произвольной логикой.
@@ -52,11 +52,11 @@ r.reduplicate('собака'); // => х*яка
 #### Продвинутый вариант использования
 Если мы хотим использовать встроенный словарь ударений, но также иметь возможность указывать редупликатору кастомные ударения в словах (подробнее о пользовательских ударениях - ниже):
 ```javascript
-var DynamicStressManager = require('reduplicator').DynamicStressManager;
-var Reduplicator = require('reduplicator').Reduplicator;
+const DynamicStressManager = require('reduplicator').DynamicStressManager;
+const Reduplicator = require('reduplicator').Reduplicator;
 
-var dict = new DynamicStressManager();
-var r = new Reduplicator(dict);
+const dict = new DynamicStressManager();
+const r = new Reduplicator(dict);
 
 r.reduplicate('сОбака'); // => х*ёбака
 r.reduplicate('собАка'); // => х*яка
@@ -86,8 +86,8 @@ JSON-файл со словарем должен иметь формат "сло
 В коде создайте экземпляр `DynamicStressManager` и передайте ему путь к словарю:
 
 ```javascript
-var dict = new DynamicStressManager('./custom.json', true);
-var r = new Reduplicator(dict);
+const dict = new DynamicStressManager('./custom.json', true);
+const r = new Reduplicator(dict);
 r.reduplicate('сОбака'); // => х*ёбака
 ```
 
