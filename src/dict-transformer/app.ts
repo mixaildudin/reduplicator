@@ -13,7 +13,7 @@ import AlphabetHelper from '../alphabetHelper';
 	let processed = 0, added = 0, skipped = 0;
 
 	const allowedChars = AlphabetHelper.getAll().concat('-');
-	const stressChar = "'";
+	const stressMarker = "'";
 
 	const lineReader = readline.createInterface({
 		input: fs.createReadStream(source)
@@ -30,31 +30,40 @@ import AlphabetHelper from '../alphabetHelper';
 
 		const parts = line.split('|');
 		let word = parts[0].trim().toLowerCase();
-		const stress = parts[2].trim();
+		let stress = parts[2].trim();
 
 		processed++;
 
 		if (word.startsWith('*')) word = word.substring(1);
 
-		if (!isValidWord(word)) {
-			console.log('Skipping word ' + word);
+		if (!isWordValid(word)) {
+			console.log(`Skipping word ${word}`);
 			skipped++;
 			return;
 		}
 
 		if (word.length < 3) {
-			console.log('Skipping word ' + word + ' because it is too short');
+			console.log(`Skipping word ${word} because it is too short`);
 			skipped++;
 			return;
 		}
 
 		if (word.length > 17) {
-			console.log('Skipping word ' + word + ' because it is too long');
+			console.log(`Skipping word ${word} because it is too long`);
 			skipped++;
 			return;
 		}
 
-		const stressCharIdx = stress.indexOf(stressChar);
+		if (!isStressValid(stress)) {
+			console.log(`Skipping word ${word} because stress is invalid`);
+			skipped++;
+			return;
+		}
+
+		// оставляем только "главное" ударение, обозначенное одинарной кавычкой, обратные кавычки убираем
+		stress = stress.replace(/`/g, '');
+
+		const stressCharIdx = stress.indexOf(stressMarker);
 
 		if (stressCharIdx == -1) {
 			console.log(`Skipping word ${word} as no stress found`);
@@ -84,8 +93,11 @@ import AlphabetHelper from '../alphabetHelper';
 		console.log(`Processed ${processed}, added ${added}, skipped ${skipped}`);
 	});
 
-	function isValidWord(word: string): boolean {
-		return word.split('')
-			.every(c => c === stressChar || allowedChars.indexOf(c) >= 0);
+	function isWordValid(word: string): boolean {
+		return word.split('').every(c => allowedChars.includes(c));
+	}
+
+	function isStressValid(wordWithStress: string): boolean {
+		return wordWithStress && wordWithStress.split('').filter(c => c === stressMarker).length === 1;
 	}
 })();
