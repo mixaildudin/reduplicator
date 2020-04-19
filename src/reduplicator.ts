@@ -64,10 +64,8 @@ export class Reduplicator {
 
 		const stressInfo = this.getStressInfo(word);
 
-		// слова из двух слогов и слова с ударением на первый слог редуплицируем дефолтным алгоритмом.
-		// от слов с 3 и менее слогами отрезается слишком много, поэтому слова с неизвестным ударением и в которых менее трех слогов
-		// тоже обрабатываем простым алгоритмом
-		if (!stressInfo || syllableCount === 2 || (stressInfo && stressInfo.syllableIdx === 0) || (!stressInfo && syllableCount <= 3)) {
+		// слова с неизвестным ударением, слова из двух слогов и слова с ударением на первый слог редуплицируем простым алгоритмом.
+		if (!stressInfo || syllableCount === 2 || (stressInfo?.syllableIdx === 0)) {
 			return this.reduplicateSimply(lowercasedWordLetters, stressInfo);
 		} else {
 			return this.reduplicateAdvanced(lowercasedWordLetters, stressInfo);
@@ -97,7 +95,7 @@ export class Reduplicator {
 	}
 
 	private reduplicateSimply(wordLetters: string[], stressInfo: WordStress): string {
-		const knownStressedLetterIdx = stressInfo && stressInfo.letterIdx;
+		const knownStressedLetterIdx = stressInfo?.letterIdx;
 
 		for (let i = 0; i < wordLetters.length - 1; i++) {
 			const curLetter = wordLetters[i];
