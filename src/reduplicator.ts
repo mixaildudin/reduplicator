@@ -83,6 +83,11 @@ export class Reduplicator {
 	}
 
 	private getStressInfo(word: string): WordStress {
+		// TODO: подумать, что со словами с дефисами, пока что такой костылик. считаем, что для них ударение нам не известно
+		if (word.includes('-')) {
+			return null;
+		}
+
 		const letterIdx = this.dictionaryManager.getStressedLetterIndex(word);
 		if (letterIdx == null) return null;
 
@@ -114,7 +119,7 @@ export class Reduplicator {
 	private reduplicateAdvanced(wordLetters: string[], stressInfo: WordStress): string {
 		const prefixSyllableCount = 2;
 
-		let letterNumber = 0, syllableNumber = 0, vowel: string = null;
+		let letterNumber, syllableNumber = 0, vowel: string = null;
 
 		// найдем гласную букву, соответствующую второму слогу
 		for (letterNumber = 0; letterNumber < wordLetters.length; letterNumber++) {
