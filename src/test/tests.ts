@@ -65,6 +65,13 @@ describe('Reduplicator with DefaultStressManager', () => {
 			expect(r.reduplicate('а')).to.be.null;
 			expect(r.reduplicate('ад')).to.be.null;
 		});
+
+		it('should correctly reduplicate words with hyphens', () => {
+			expect(r.reduplicate('англо-саксонский')).to.equal('хуянгло-саксонский');
+			expect(r.reduplicate('русско-английский')).to.equal('хуюсско-английский');
+			expect(r.reduplicate('русско-немецко-французский')).to.equal('хуюсско-немецко-французский');
+			expect(r.reduplicate('из-за')).to.equal('хуиз-за');
+		});
 	});
 });
 
@@ -89,6 +96,13 @@ describe('Reduplicator with DynamicStressManager', () => {
 			expect(r.reduplicate('СОбаКа')).to.equal('хуёбака');
 			expect(r.reduplicate('ХоЛоДиЛьНик')).to.equal('хуедильник');
 			expect(r.reduplicate('холодильниК')).to.equal('хуедильник');
+		});
+
+		it('should correctly reduplicate words with hyphens regardless of the stress', () => {
+			expect(r.reduplicate('англо-саксОнский')).to.equal('хуянгло-саксонский');
+			expect(r.reduplicate('Англо-саксонский')).to.equal('хуянгло-саксонский');
+			expect(r.reduplicate('русско-англИйский')).to.equal('хуюсско-английский');
+			expect(r.reduplicate('рУсско-английский')).to.equal('хуюсско-английский');
 		});
 	});
 });

@@ -4,15 +4,18 @@ import AlphabetHelper from '../alphabetHelper';
 
 (function() {
 	if (process.argv.length < 3) {
-		console.log('USAGE: node app.js source.txt destination.txt');
+		console.log('USAGE: node app.js source.txt destination.txt [-v]');
 		return;
 	}
 
-	const [,, source, destination] = process.argv;
+	const [,, source, destination, ...rest] = process.argv;
+	const isVerbose = rest.includes('-v');
+
+	console.log('Starting...');
 
 	let processed = 0, added = 0, skipped = 0;
 
-	const allowedChars = AlphabetHelper.getAll().concat('-');
+	const allowedChars = AlphabetHelper.getAll();
 	const stressMarker = "'";
 
 	const lineReader = readline.createInterface({
@@ -34,28 +37,32 @@ import AlphabetHelper from '../alphabetHelper';
 
 		processed++;
 
+		if (processed % 100_000 === 0) {
+			console.log(`${processed.toLocaleString()} words processed`);
+		}
+
 		if (word.startsWith('*')) word = word.substring(1);
 
 		if (!isWordValid(word)) {
-			console.log(`Skipping word ${word}`);
+			if (isVerbose) console.log(`Skipping word ${word}`);
 			skipped++;
 			return;
 		}
 
 		if (word.length < 3) {
-			console.log(`Skipping word ${word} because it is too short`);
+			if (isVerbose) console.log(`Skipping word ${word} because it is too short`);
 			skipped++;
 			return;
 		}
 
 		if (word.length > 17) {
-			console.log(`Skipping word ${word} because it is too long`);
+			if (isVerbose) console.log(`Skipping word ${word} because it is too long`);
 			skipped++;
 			return;
 		}
 
 		if (!isStressValid(stress)) {
-			console.log(`Skipping word ${word} because stress is invalid`);
+			if (isVerbose) console.log(`Skipping word ${word} because stress is invalid`);
 			skipped++;
 			return;
 		}
@@ -66,7 +73,7 @@ import AlphabetHelper from '../alphabetHelper';
 		const stressCharIdx = stress.indexOf(stressMarker);
 
 		if (stressCharIdx == -1) {
-			console.log(`Skipping word ${word} as no stress found`);
+			if (isVerbose) console.log(`Skipping word ${word} as no stress found`);
 			skipped++;
 			return;
 		}
@@ -75,7 +82,7 @@ import AlphabetHelper from '../alphabetHelper';
 
 		const firstVowelIdx = word.split('').findIndex(l => AlphabetHelper.getVowels().includes(l));
 		if (firstVowelIdx === stressedLetterIdx) {
-			console.log(`Skipping word ${word} because the first vowel is stressed`);
+			if (isVerbose) console.log(`Skipping word ${word} because the first vowel is stressed`);
 			skipped++;
 			return;
 		}
@@ -85,12 +92,15 @@ import AlphabetHelper from '../alphabetHelper';
 	});
 
 	lineReader.on('close', () => {
-		const resultFileContent = Object.keys(result).map(word => word + result[word]).join('\n');
+		console.log('Writing dictionary file...');
+
+		const words = Object.keys(result);
+		const resultFileContent = words.map(word => word + result[word]).join('\n');
 		fs.writeFileSync(destination, resultFileContent, { encoding: 'utf8' });
 		console.log();
 
 		console.log('Done!');
-		console.log(`Processed ${processed}, added ${added}, skipped ${skipped}`);
+		console.log(`Processed ${processed.toLocaleString()}, added ${added.toLocaleString()}, skipped ${skipped.toLocaleString()}, ${words.length.toLocaleString()} entries in the output dictionary`);
 	});
 
 	function isWordValid(word: string): boolean {
