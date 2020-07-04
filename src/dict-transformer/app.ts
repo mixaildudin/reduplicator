@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import AlphabetHelper from '../alphabetHelper';
 
 (function() {
-	if (process.argv.length < 3) {
+	if (process.argv.length < 4) {
 		console.log('USAGE: node app.js source.txt destination.txt [-v]');
 		return;
 	}
@@ -22,7 +22,7 @@ import AlphabetHelper from '../alphabetHelper';
 		input: fs.createReadStream(source)
 	});
 
-	// слово => номер букву под ударением.
+	// слово => номер буквы под ударением.
 	// для омонимичных слов с разным ударением будут коллизии, и последнее слово выиграет
 	const result: { [word: string]: number } = {};
 
