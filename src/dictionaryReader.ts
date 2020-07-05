@@ -58,7 +58,7 @@ export class DictionaryReader {
 					const char = stringRead[i];
 					const isFileEndReached = isLastChunk && (i === (stringRead.length - 1));
 
-					if (isLetterOrDash(char)) {
+					if (isLetter(char)) {
 						currentWord += char;
 					} else if (isDigit(char)) {
 						currentWordStressIdxStr += char;
@@ -90,8 +90,8 @@ export class DictionaryReader {
 			return c >= '0' && c <= '9';
 		}
 
-		function isLetterOrDash(c: string) {
-			return (c >= 'a' && c <= 'я') || c === 'ё' || c === '-';
+		function isLetter(c: string) {
+			return (c >= 'a' && c <= 'я') || c === 'ё';
 		}
 	}
 }
