@@ -1,10 +1,12 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
 import AlphabetHelper from '../alphabetHelper';
+import {EncodingManager} from '../encodingManager';
+const { deflateSync } = require('zlib');
 
 (function() {
 	if (process.argv.length < 4) {
-		console.log('USAGE: node app.js source.txt destination.txt [-v]');
+		console.log('USAGE: node app.js source destination [-v]');
 		return;
 	}
 
@@ -24,7 +26,7 @@ import AlphabetHelper from '../alphabetHelper';
 
 	// слово => номер буквы под ударением.
 	// для омонимичных слов с разным ударением будут коллизии, и последнее слово выиграет
-	const result: { [word: string]: number } = {};
+	let result: { [word: string]: number } = {};
 
 	lineReader.on('line', line => {
 		line = line.trim();
@@ -94,11 +96,25 @@ import AlphabetHelper from '../alphabetHelper';
 	lineReader.on('close', () => {
 		console.log('Writing dictionary file...');
 
-		const words = Object.keys(result);
-		const resultFileContent = words.map(word => word + result[word]).join('\n');
-		fs.writeFileSync(destination, resultFileContent, { encoding: 'utf8' });
-		console.log();
+		const encodingManager = new EncodingManager();
+		let fileDescriptor: number;
+		let words: string[];
 
+		try {
+			fileDescriptor = fs.openSync(destination, 'w');
+
+			words = Object.keys(result).sort((x, y) => x.localeCompare(y));
+
+			const resultFileContent = words.map(word => word + result[word]).join('');
+			result = null; // делаем доступным для GC
+			fs.writeFileSync(destination, deflateSync(encodingManager.encode(resultFileContent)), { encoding: 'binary' });
+		} finally {
+			if (fileDescriptor != null) {
+				fs.closeSync(fileDescriptor);
+			}
+		}
+
+		console.log();
 		console.log('Done!');
 		console.log(`Processed ${processed.toLocaleString()}, added ${added.toLocaleString()}, skipped ${skipped.toLocaleString()}, ${words.length.toLocaleString()} entries in the output dictionary`);
 	});

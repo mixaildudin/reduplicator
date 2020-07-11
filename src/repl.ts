@@ -8,14 +8,10 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
-console.log('Initialization...');
+const stressManager = new DynamicStressManager();
+const r = new Reduplicator(stressManager);
 
-const dict = new DynamicStressManager();
-const r = new Reduplicator(dict);
-
-console.log('Ready!');
-console.log();
-console.log('Reduplicator REPL');
+console.log('Reduplicator REPL. Type your word, then hit <Enter>.');
 
 rl.on('line', (input) => {
 	console.log(r.reduplicate(input));
