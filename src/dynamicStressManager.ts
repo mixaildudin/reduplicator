@@ -29,7 +29,7 @@ export class DynamicStressManager extends DefaultStressManager {
 
 		const shouldUpdateDictionary = stressInfo.isCustom && this.customDictPath && !this.isCustomDictionaryReadOnly;
 		if (shouldUpdateDictionary) {
-			this.saveCustomStress(DynamicStressManager.normalizeWord(word), stressInfo.stressIdx);
+			this.saveCustomStress(this.normalizeWord(word), stressInfo.stressIdx);
 		}
 
 		return stressInfo.stressIdx;
@@ -40,7 +40,7 @@ export class DynamicStressManager extends DefaultStressManager {
 
 		const stressedVowels = word.split('').map((letter, idx) => { return { letter, idx } }).filter(x => isStressedVowel(x.letter));
 		if (stressedVowels.length !== 1) {
-			const normalizedWord = DynamicStressManager.normalizeWord(word);
+			const normalizedWord = this.normalizeWord(word);
 			let stressIdx = this.customDict[normalizedWord] ?? super.getStressedLetterIndex(normalizedWord);
 			return { stressIdx, isCustom: false };
 		}
@@ -56,9 +56,5 @@ export class DynamicStressManager extends DefaultStressManager {
 
 	private static isUpperCase(c: string): boolean {
 		return c && (c === c.toUpperCase());
-	}
-
-	private static normalizeWord(word: string): string {
-		return word.toLowerCase().replace(/ё/g, 'е');
 	}
 }

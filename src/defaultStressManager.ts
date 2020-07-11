@@ -14,12 +14,16 @@ export class DefaultStressManager implements StressManager {
 		this.encoding = new EncodingManager();
 	}
 
+	protected normalizeWord(word: string): string {
+		return word.toLowerCase().replace(/ё/g, 'е');
+	}
+
 	getStressedLetterIndex(word: string): number {
 		if (!word) {
 			return null;
 		}
 
-		word = word.toLowerCase().replace(/ё/g, 'е');
+		word = this.normalizeWord(word);
 
 		let left = 0,
 			right = this.dict.length - 1,

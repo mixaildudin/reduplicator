@@ -2,16 +2,12 @@ import AlphabetHelper from './alphabetHelper';
 
 export class EncodingManager {
 	private static readonly allCharacters = AlphabetHelper.getAll().concat('1234567890'.split(''));
-
 	private charToCode: {[letter: string]: number} = {};
-	private codeToChar: string[] = new Array(EncodingManager.allCharacters.length);
 
 	constructor() {
 		for (let i = 0; i < EncodingManager.allCharacters.length; i++) {
 			const letter = EncodingManager.allCharacters[i];
-
 			this.charToCode[letter] = i;
-			this.codeToChar[i] = letter;
 		}
 	}
 
@@ -40,7 +36,7 @@ export class EncodingManager {
 			return '';
 		}
 
-		const char = this.codeToChar[code];
+		const char = EncodingManager.allCharacters[code];
 		if (char == null) {
 			throw new Error('Unknown code ' + code);
 		}
