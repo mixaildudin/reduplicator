@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import {StressDictionary} from "./interfaces/stressDictionary";
 import AlphabetHelper from './alphabetHelper';
-import {StressManagerWithBuiltInDictionary} from './stressManagerWithBuiltInDictionary';
+import {DefaultStressManager} from './defaultStressManager';
 
-export class DynamicStressManager extends StressManagerWithBuiltInDictionary {
+export class DynamicStressManager extends DefaultStressManager {
 	private readonly vowels: Set<string>;
 
 	private readonly customDictPath: string;
