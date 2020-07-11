@@ -6,7 +6,7 @@ const { deflateSync } = require('zlib');
 
 (function() {
 	if (process.argv.length < 4) {
-		console.log('USAGE: node app.js source destination [-v]');
+		console.log('USAGE: node app.js source.txt destination.gz [-v]');
 		return;
 	}
 
