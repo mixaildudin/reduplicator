@@ -7,7 +7,7 @@ export class DynamicStressManager extends DefaultStressManager {
 	private readonly vowels: Set<string>;
 
 	private readonly customDictPath: string;
-	private customDict: StressDictionary = {};
+	private readonly customDict: StressDictionary = {};
 	private readonly isCustomDictionaryReadOnly: boolean = false;
 
 	constructor(customDictionaryPath?: string, isCustomDictionaryReadOnly?: boolean) {
@@ -50,10 +50,6 @@ export class DynamicStressManager extends DefaultStressManager {
 	}
 
 	private saveCustomStress(word: string, stressIdx: number): void {
-		if (!this.customDict) {
-			this.customDict = {};
-		}
-
 		this.customDict[word] = stressIdx;
 		fs.writeFileSync(this.customDictPath, JSON.stringify(this.customDict, null, 2), { encoding: 'UTF8' });
 	}
