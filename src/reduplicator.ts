@@ -1,9 +1,11 @@
 import WordStress from './interfaces/wordStress';
-import { StressManager } from './interfaces/stressManager';
+import {StressManager} from './interfaces/stressManager';
 import AlphabetHelper from './alphabetHelper';
+import {ReduplicatorOptions} from './reduplicatorOptions';
+import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
 
 export class Reduplicator {
-	private readonly minWordLength = 3;
+	private readonly minWordLength = 2;
 	private readonly vowels: Set<string>;
 	private readonly consonants: Set<string>;
 	private readonly dictionaryManager: StressManager;
@@ -36,7 +38,7 @@ export class Reduplicator {
 
 	private readonly prefix = 'ху';
 
-	private readonly singleSyllableWordPrefix = 'хуе';
+	private readonly oneSyllableWordPrefix = 'хуе';
 
 	constructor(dictionaryManager: StressManager) {
 		this.vowels = new Set<string>(AlphabetHelper.getVowels());
@@ -45,7 +47,7 @@ export class Reduplicator {
 		this.dictionaryManager = dictionaryManager;
 	}
 
-	public reduplicate(word: string): string {
+	public reduplicate(word: string, options?: ReduplicatorOptions): string {
 		if (word.length < this.minWordLength) {
 			return null;
 		}
@@ -59,7 +61,10 @@ export class Reduplicator {
 		}
 
 		if (syllableCount === 1) {
-			return this.singleSyllableWordPrefix + lowercasedWord;
+			const mode = options?.oneSyllableWordReduplicationMode ?? OneSyllableWordReduplicationMode.Default;
+			if (mode === OneSyllableWordReduplicationMode.AddPrefix) {
+				return this.oneSyllableWordPrefix + lowercasedWord;
+			}
 		}
 
 		const stressInfo = this.getStressInfo(word);

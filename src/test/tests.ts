@@ -1,8 +1,9 @@
-import { it, describe } from 'mocha';
-import { expect } from 'chai';
+import {describe, it} from 'mocha';
+import {expect} from 'chai';
 import {Reduplicator} from '../reduplicator';
 import {DefaultStressManager} from '../defaultStressManager';
 import {DynamicStressManager} from '../dynamicStressManager';
+import {OneSyllableWordReduplicationMode} from '../oneSyllableWordReduplicationMode';
 
 describe('Reduplicator with DefaultStressManager', () => {
 	const dict = new DefaultStressManager();
@@ -51,8 +52,10 @@ describe('Reduplicator with DefaultStressManager', () => {
 		});
 
 		it('should correctly reduplicate single-syllable words', () => {
-			expect(r.reduplicate('кот')).to.equal('хуекот');
-			expect(r.reduplicate('пёс')).to.equal('хуепёс');
+			expect(r.reduplicate('кот', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуекот');
+			expect(r.reduplicate('кот', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.Default })).to.equal('хуёт');
+			expect(r.reduplicate('пёс', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуепёс');
+			expect(r.reduplicate('пёс', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.Default })).to.equal('хуёс');
 		});
 
 		it('should correctly reduplicate words not found in the dictionary', () => {
@@ -63,7 +66,6 @@ describe('Reduplicator with DefaultStressManager', () => {
 		it('should not reduplicate word if it is too short or has no vowels', () => {
 			expect(r.reduplicate('птрт')).to.be.null;
 			expect(r.reduplicate('а')).to.be.null;
-			expect(r.reduplicate('ад')).to.be.null;
 		});
 
 		it('should correctly reduplicate words with hyphens', () => {
