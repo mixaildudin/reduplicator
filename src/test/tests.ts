@@ -52,10 +52,18 @@ describe('Reduplicator with DefaultStressManager', () => {
 		});
 
 		it('should correctly reduplicate single-syllable words', () => {
-			expect(r.reduplicate('кот', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуекот');
-			expect(r.reduplicate('кот', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.Default })).to.equal('хуёт');
-			expect(r.reduplicate('пёс', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуепёс');
-			expect(r.reduplicate('пёс', { oneSyllableWordReduplicationMode: OneSyllableWordReduplicationMode.Default })).to.equal('хуёс');
+			expect(r.reduplicate('кот', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуекот');
+			expect(r.reduplicate('кот')).to.equal('хуёт');
+			expect(r.reduplicate('кот', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.Default })).to.equal('хуёт');
+			expect(r.reduplicate('пёс', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуепёс');
+			expect(r.reduplicate('пёс')).to.equal('хуёс');
+			expect(r.reduplicate('пёс', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.Default })).to.equal('хуёс');
+			expect(r.reduplicate('да', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуеда');
+			expect(r.reduplicate('да')).to.be.null;
+			expect(r.reduplicate('да', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.Default })).to.be.null;
+			expect(r.reduplicate('что', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix })).to.equal('хуечто');
+			expect(r.reduplicate('что', { oneSyllableWordHandling: OneSyllableWordReduplicationMode.Default })).to.be.null;
+			expect(r.reduplicate('что')).to.be.null;
 		});
 
 		it('should correctly reduplicate words not found in the dictionary', () => {

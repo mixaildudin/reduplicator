@@ -1,5 +1,8 @@
 import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
 
 export interface ReduplicatorOptions {
-	oneSyllableWordReduplicationMode?: OneSyllableWordReduplicationMode;
+	/**
+	 * Позволяет указать, как обрабатывать слова из одного слога, см. {@link OneSyllableWordReduplicationMode}
+	 */
+	oneSyllableWordHandling?: OneSyllableWordReduplicationMode;
 }

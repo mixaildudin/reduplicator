@@ -61,7 +61,7 @@ export class Reduplicator {
 		}
 
 		if (syllableCount === 1) {
-			const mode = options?.oneSyllableWordReduplicationMode ?? OneSyllableWordReduplicationMode.Default;
+			const mode = options?.oneSyllableWordHandling ?? OneSyllableWordReduplicationMode.Default;
 			if (mode === OneSyllableWordReduplicationMode.AddPrefix) {
 				return this.oneSyllableWordPrefix + lowercasedWord;
 			}
