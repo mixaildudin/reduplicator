@@ -140,7 +140,7 @@ r.reduplicate('сОбака'); // => х*ёбака
 import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
 
 r.reduplicate('кот', {
-	oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix
+  oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix
 });
 ```
 
