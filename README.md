@@ -2,9 +2,10 @@
 
 [![npm](https://img.shields.io/npm/v/reduplicator)](https://npmjs.com/package/reduplicator)
 [![npm](https://img.shields.io/npm/l/reduplicator)](https://github.com/mixaildudin/reduplicator/blob/master/LICENSE.md)
+[![Build Status](https://app.travis-ci.com/mixaildudin/reduplicator.svg?branch=master)](https://app.travis-ci.com/mixaildudin/reduplicator)
 
 **Внимание! Исходный код содержит ненормативную лексику!**
-Здесь, в readme, все нецензурные слова прикрыты звёздочками. Х*ёздочками.
+Здесь, в readme, все нецензурные слова прикрыты звёздочками. Х\*ёздочками.
 
 ## Что это такое?
 Лексическая-х\*ическая редупликация-х\*епликация.
