@@ -137,7 +137,7 @@ r.reduplicate('сОбака'); // => х*ёбака
 Пример вызова:
 
 ```javascript
-import {OneSyllableWordReduplicationMode} from "./oneSyllableWordReduplicationMode";
+import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
 
 r.reduplicate('кот', {
 	oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix
