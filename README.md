@@ -139,7 +139,7 @@ r.reduplicate('сОбака'); // => х*ёбака
 ```javascript
 import {OneSyllableWordReduplicationMode} from "./oneSyllableWordReduplicationMode";
 
-r.reduplicate('собака', {
+r.reduplicate('кот', {
 	oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix
 });
 ```
