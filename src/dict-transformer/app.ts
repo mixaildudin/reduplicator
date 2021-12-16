@@ -26,7 +26,7 @@ const { deflateSync } = require('zlib');
 
 	// слово => номер буквы под ударением.
 	// для омонимичных слов с разным ударением будут коллизии, и последнее слово выиграет
-	let result: { [word: string]: number } = {};
+	let result: { [word: string]: number } | null = {};
 
 	lineReader.on('line', line => {
 		line = line.trim();
@@ -89,7 +89,7 @@ const { deflateSync } = require('zlib');
 			return;
 		}
 
-		result[word] = stressedLetterIdx;
+		result![word] = stressedLetterIdx;
 		added++;
 	});
 
@@ -97,16 +97,16 @@ const { deflateSync } = require('zlib');
 		console.log('Writing dictionary file...');
 
 		const encodingManager = new EncodingManager();
-		let fileDescriptor: number;
+		let fileDescriptor: number | null = null;
 		let words: string[];
 
 		try {
 			fileDescriptor = fs.openSync(destination, 'w');
 
-			words = Object.keys(result).sort((x, y) => x.localeCompare(y));
+			words = Object.keys(result!).sort((x, y) => x.localeCompare(y));
 
-			const resultFileContent = words.map(word => word + result[word]).join('');
-			result = null; // делаем доступным для GC
+			const resultFileContent = words.map(word => word + result![word]).join('');
+			result = null; // делаем доступным для GC перед тяжелой записью
 			fs.writeFileSync(destination, deflateSync(encodingManager.encode(resultFileContent)), { encoding: 'binary' });
 		} finally {
 			if (fileDescriptor != null) {
@@ -124,6 +124,6 @@ const { deflateSync } = require('zlib');
 	}
 
 	function isStressValid(wordWithStress: string): boolean {
-		return wordWithStress && wordWithStress.split('').filter(c => c === stressMarker).length === 1;
+		return !!wordWithStress && wordWithStress.split('').filter(c => c === stressMarker).length === 1;
 	}
 })();

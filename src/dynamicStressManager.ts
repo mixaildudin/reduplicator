@@ -1,12 +1,13 @@
 import * as fs from 'fs';
-import {StressDictionary} from './interfaces/stressDictionary';
 import AlphabetHelper from './alphabetHelper';
 import {DefaultStressManager} from './defaultStressManager';
+
+type StressDictionary = { [word: string]: number | undefined };
 
 export class DynamicStressManager extends DefaultStressManager {
 	private readonly vowels: Set<string>;
 
-	private readonly customDictPath: string;
+	private readonly customDictPath: string | undefined;
 	private readonly customDict: StressDictionary = {};
 	private readonly isCustomDictionaryReadOnly: boolean = false;
 
@@ -24,37 +25,38 @@ export class DynamicStressManager extends DefaultStressManager {
 		}
 	}
 
-	public getStressedLetterIndex(word: string): number {
-		const stressInfo = this.getStress(word);
+	public getStressedLetterIndex(word: string): number | null {
+		const [ stressIdx, isCustom ] = this.getStress(word);
 
-		const shouldUpdateDictionary = stressInfo.isCustom && this.customDictPath && !this.isCustomDictionaryReadOnly;
+		const shouldUpdateDictionary = stressIdx != null && isCustom && this.customDictPath && !this.isCustomDictionaryReadOnly;
 		if (shouldUpdateDictionary) {
-			this.saveCustomStress(this.normalizeWord(word), stressInfo.stressIdx);
+			this.saveCustomStress(this.normalizeWord(word), stressIdx);
 		}
 
-		return stressInfo.stressIdx;
+		return stressIdx;
 	}
 
-	private getStress(word: string): { stressIdx: number, isCustom: boolean } {
+	private getStress(word: string): [ stressIdx: number | null, isCustom: boolean ] {
 		const isStressedVowel = (letter: string) => this.vowels.has(letter.toLowerCase()) && DynamicStressManager.isUpperCase(letter);
 
-		const stressedVowels = word.split('').map((letter, idx) => { return { letter, idx } }).filter(x => isStressedVowel(x.letter));
-		if (stressedVowels.length !== 1) {
-			const normalizedWord = this.normalizeWord(word);
-			let stressIdx = this.customDict[normalizedWord] ?? super.getStressedLetterIndex(normalizedWord);
-			return { stressIdx, isCustom: false };
+		const customStressedVowels = word.split('').map((letter, idx) => { return { letter, idx } }).filter(x => isStressedVowel(x.letter));
+
+		if (customStressedVowels.length === 1) {
+			const stressIdx = customStressedVowels[0].idx;
+			return [ stressIdx, true ];
 		}
 
-		const stressIdx = stressedVowels[0].idx;
-		return { stressIdx, isCustom: true };
+		const normalizedWord = this.normalizeWord(word);
+		let stressIdx = this.customDict[normalizedWord] ?? super.getStressedLetterIndex(normalizedWord);
+		return [ stressIdx, false ];
 	}
 
 	private saveCustomStress(word: string, stressIdx: number): void {
 		this.customDict[word] = stressIdx;
-		fs.writeFileSync(this.customDictPath, JSON.stringify(this.customDict, null, 2), { encoding: 'UTF8' });
+		fs.writeFileSync(this.customDictPath!, JSON.stringify(this.customDict, null, 2), { encoding: 'UTF8' });
 	}
 
 	private static isUpperCase(c: string): boolean {
-		return c && (c === c.toUpperCase());
+		return !!c && (c === c.toUpperCase());
 	}
 }

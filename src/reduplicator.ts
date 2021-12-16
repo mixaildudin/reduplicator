@@ -2,11 +2,15 @@ import {StressManager} from './interfaces/stressManager';
 import AlphabetHelper from './alphabetHelper';
 import {ReduplicatorOptions} from './reduplicatorOptions';
 import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
-import WordStress from './interfaces/wordStress';
 
 export type Vowel = 'а' | 'е' | 'ё' | 'и' | 'о' | 'у' | 'ы' | 'э' | 'ю' | 'я';
 
 export type VowelPairs = Record<Vowel, Vowel>;
+
+interface WordStress {
+	letterIdx: number,
+	syllableIdx: number
+}
 
 export abstract class Reduplicator {
 	protected readonly vowels: Set<string>;
@@ -26,7 +30,7 @@ export abstract class Reduplicator {
 		this.dictionaryManager = dictionaryManager;
 	}
 
-	public reduplicate(word: string, options?: ReduplicatorOptions): string {
+	public reduplicate(word: string, options?: ReduplicatorOptions): string | null {
 		if (word.length < this.minWordLength) {
 			return null;
 		}
@@ -56,7 +60,7 @@ export abstract class Reduplicator {
 		}
 	}
 
-	private reduplicateSimply(wordLetters: string[], stressInfo: WordStress): string {
+	private reduplicateSimply(wordLetters: string[], stressInfo: WordStress | null): string | null {
 		const knownStressedLetterIdx = stressInfo?.letterIdx;
 
 		for (let i = 0; i < wordLetters.length - 1; i++) {
@@ -76,7 +80,7 @@ export abstract class Reduplicator {
 	private reduplicateAdvanced(wordLetters: string[], stressInfo: WordStress): string {
 		const prefixSyllableCount = 2;
 
-		let letterNumber, syllableNumber = 0, vowel: Vowel = null;
+		let letterNumber, syllableNumber = 0, vowel: Vowel | null = null;
 
 		// найдем гласную букву, соответствующую второму слогу
 		for (letterNumber = 0; letterNumber < wordLetters.length; letterNumber++) {
@@ -90,7 +94,7 @@ export abstract class Reduplicator {
 			}
 		}
 
-		const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount - 1);
+		const pairVowel = this.getVowelPair(vowel!, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount - 1);
 		return this.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
 	}
 
@@ -104,7 +108,7 @@ export abstract class Reduplicator {
 			: this.defaultPairVowel);
 	}
 
-	private getStressInfo(word: string): WordStress {
+	private getStressInfo(word: string): WordStress | null {
 		// TODO: подумать, что со словами с дефисами, пока что такой костылик. считаем, что для них ударение нам не известно
 		if (word.includes('-')) {
 			return null;

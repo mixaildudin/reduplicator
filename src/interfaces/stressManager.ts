@@ -1,3 +1,3 @@
 export interface StressManager {
-	getStressedLetterIndex(word: string): number;
+	getStressedLetterIndex(word: string): number | null;
 }

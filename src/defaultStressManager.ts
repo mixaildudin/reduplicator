@@ -18,7 +18,7 @@ export class DefaultStressManager implements StressManager {
 		return word.toLowerCase().replace(/ё/g, 'е');
 	}
 
-	getStressedLetterIndex(word: string): number {
+	getStressedLetterIndex(word: string): number | null {
 		if (!word) {
 			return null;
 		}
