@@ -1,13 +1,13 @@
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
-import {Reduplicator} from '../reduplicator';
+import {Hueficator} from '../hueficator';
 import {DefaultStressManager} from '../defaultStressManager';
 import {DynamicStressManager} from '../dynamicStressManager';
 import {OneSyllableWordReduplicationMode} from '../oneSyllableWordReduplicationMode';
 
 describe('Reduplicator with DefaultStressManager', () => {
 	const dict = new DefaultStressManager();
-	const r = new Reduplicator(dict);
+	const r = new Hueficator(dict);
 
 	describe('#reduplicate', () => {
 		it('should correctly reduplicate words from the dictionary', () => {
@@ -87,7 +87,7 @@ describe('Reduplicator with DefaultStressManager', () => {
 
 describe('Reduplicator with DynamicStressManager', () => {
 	const dict = new DynamicStressManager();
-	const r = new Reduplicator(dict);
+	const r = new Hueficator(dict);
 
 	describe('#reduplicate', () => {
 		it('should correctly reduplicate words with custom stress', () => {

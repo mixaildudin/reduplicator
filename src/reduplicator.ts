@@ -1,46 +1,25 @@
-import WordStress from './interfaces/wordStress';
 import {StressManager} from './interfaces/stressManager';
 import AlphabetHelper from './alphabetHelper';
 import {ReduplicatorOptions} from './reduplicatorOptions';
 import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
+import WordStress from './interfaces/wordStress';
 
-export class Reduplicator {
-	private readonly minWordLength = 2;
-	private readonly vowels: Set<string>;
-	private readonly consonants: Set<string>;
-	private readonly dictionaryManager: StressManager;
+export type Vowel = 'а' | 'е' | 'ё' | 'и' | 'о' | 'у' | 'ы' | 'э' | 'ю' | 'я';
 
-	private readonly defaultVowelPairs: { [letter: string]: string } = {
-		"а": "е",
-		"е": "е",
-		"ё": "е",
-		"и": "е",
-		"о": "е",
-		"у": "е",
-		"ы": "е",
-		"э": "е",
-		"ю": "е",
-		"я": "е"
-	};
+export type VowelPairs = Record<Vowel, Vowel>;
 
-	private readonly stressedVowelPairs: { [letter: string]: string } = {
-		"а": "я",
-		"е": "е",
-		"ё": "ё",
-		"и": "и",
-		"о": "ё",
-		"у": "ю",
-		"ы": "и",
-		"э": "е",
-		"ю": "ю",
-		"я": "я"
-	};
+export abstract class Reduplicator {
+	protected readonly vowels: Set<string>;
+	protected readonly consonants: Set<string>;
+	protected readonly dictionaryManager: StressManager;
+	protected readonly minWordLength = 2;
 
-	private readonly prefix = 'ху';
+	protected abstract get defaultPairVowel(): Vowel;
+	protected abstract get stressedVowelPairs(): Readonly<VowelPairs>;
+	protected abstract get oneSyllableWordPrefix(): string;
+	protected abstract get prefix(): string;
 
-	private readonly oneSyllableWordPrefix = 'хуе';
-
-	constructor(dictionaryManager: StressManager) {
+	protected constructor(dictionaryManager: StressManager) {
 		this.vowels = new Set<string>(AlphabetHelper.getVowels());
 		this.consonants = new Set<string>(AlphabetHelper.getConsonants());
 
@@ -77,14 +56,52 @@ export class Reduplicator {
 		}
 	}
 
+	private reduplicateSimply(wordLetters: string[], stressInfo: WordStress): string {
+		const knownStressedLetterIdx = stressInfo?.letterIdx;
+
+		for (let i = 0; i < wordLetters.length - 1; i++) {
+			const curLetter = wordLetters[i];
+			const nextLetter = wordLetters[i + 1];
+
+			if (this.vowels.has(curLetter)) {
+				if (knownStressedLetterIdx == null || knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
+					return this.prefix + this.getVowelPair(curLetter as Vowel, knownStressedLetterIdx == null || knownStressedLetterIdx === i ) + wordLetters.slice(i + 1).join('');
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private reduplicateAdvanced(wordLetters: string[], stressInfo: WordStress): string {
+		const prefixSyllableCount = 2;
+
+		let letterNumber, syllableNumber = 0, vowel: Vowel = null;
+
+		// найдем гласную букву, соответствующую второму слогу
+		for (letterNumber = 0; letterNumber < wordLetters.length; letterNumber++) {
+			if (this.vowels.has(wordLetters[letterNumber])) {
+				syllableNumber++;
+				vowel = wordLetters[letterNumber] as Vowel;
+			}
+
+			if (syllableNumber === prefixSyllableCount) {
+				break;
+			}
+		}
+
+		const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount - 1);
+		return this.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
+	}
+
 	private getSyllableCount(wordLetters: string[]): number {
 		return wordLetters.filter(x => this.vowels.has(x.toLowerCase())).length;
 	}
 
-	private getVowelPair(vowel: string, forStressedVowel: boolean): string {
+	private getVowelPair(vowel: Vowel, forStressedVowel: boolean): string {
 		return (forStressedVowel
 			? this.stressedVowelPairs[vowel]
-			: this.defaultVowelPairs[vowel]);
+			: this.defaultPairVowel);
 	}
 
 	private getStressInfo(word: string): WordStress {
@@ -102,43 +119,5 @@ export class Reduplicator {
 			letterIdx,
 			syllableIdx: stressedSyllableIdx
 		};
-	}
-
-	private reduplicateSimply(wordLetters: string[], stressInfo: WordStress): string {
-		const knownStressedLetterIdx = stressInfo?.letterIdx;
-
-		for (let i = 0; i < wordLetters.length - 1; i++) {
-			const curLetter = wordLetters[i];
-			const nextLetter = wordLetters[i + 1];
-
-			if (this.vowels.has(curLetter)) {
-				if (knownStressedLetterIdx == null || knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
-					return this.prefix + this.getVowelPair(curLetter, knownStressedLetterIdx == null || knownStressedLetterIdx === i ) + wordLetters.slice(i + 1).join('');
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private reduplicateAdvanced(wordLetters: string[], stressInfo: WordStress): string {
-		const prefixSyllableCount = 2;
-
-		let letterNumber, syllableNumber = 0, vowel: string = null;
-
-		// найдем гласную букву, соответствующую второму слогу
-		for (letterNumber = 0; letterNumber < wordLetters.length; letterNumber++) {
-			if (this.vowels.has(wordLetters[letterNumber])) {
-				syllableNumber++;
-				vowel = wordLetters[letterNumber];
-			}
-
-			if (syllableNumber === prefixSyllableCount) {
-				break;
-			}
-		}
-
-		const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount - 1);
-		return this.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
 	}
 }

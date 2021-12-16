@@ -1,7 +1,7 @@
 {
   "name": "reduplicator",
-  "version": "1.2.0",
-  "description": "Х*ефикатор русских слов",
+  "version": "2.0.0",
+  "description": "Лексический редупликатор русских слов",
   "keywords": [
     "russian",
     "lexical",
@@ -19,6 +19,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
+    "ts": "tsc -w",
     "test": "tsc && mocha ./lib/test/tests.js",
     "repl": "tsc && node ./lib/repl.js",
     "prepublishOnly": "npm run test"

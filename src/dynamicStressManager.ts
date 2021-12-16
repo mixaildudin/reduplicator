@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {StressDictionary} from "./interfaces/stressDictionary";
+import {StressDictionary} from './interfaces/stressDictionary';
 import AlphabetHelper from './alphabetHelper';
 import {DefaultStressManager} from './defaultStressManager';
 

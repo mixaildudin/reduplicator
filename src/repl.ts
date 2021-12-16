@@ -1,7 +1,6 @@
-import {Reduplicator} from './reduplicator';
-
 import * as readline from 'readline';
 import {DynamicStressManager} from './dynamicStressManager';
+import {Hueficator} from './hueficator';
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -9,7 +8,7 @@ const rl = readline.createInterface({
 });
 
 const stressManager = new DynamicStressManager();
-const r = new Reduplicator(stressManager);
+const r = new Hueficator(stressManager);
 
 console.log('Reduplicator REPL. Type your word, then hit <Enter>.');
 
