@@ -12,16 +12,16 @@
 
 Более подробную информацию про лексическую редупликацию можно найти в [Википедии](https://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B4%D1%83%D0%BF%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F_%D0%B2_%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%BE%D0%BC_%D1%8F%D0%B7%D1%8B%D0%BA%D0%B5).
 
-Данная библиотека для слова вычисляет его х*ефицированную форму. Примеры:
+Данная библиотека для слова вычисляет его редуплицированную форму. Примеры:
 * привет -> х\*евет
 * собака -> х\*яка
+* собака -> хренака
 * холодильник -> х\*едильник
 * водоворот -> х\*еворот
-* бзглснхбкв -> `null`
-
-Как видно, в последнем случае построить х*ефицированную форму не удалось.
+* водоворот -> хреноворот
 
 #### Особенности
+* Два режима редупликации (х\*ефикация и хренофикация, легко добавить свой новый режим)
 * Нет внешних зависимостей
 * Синхронный API
 
@@ -34,16 +34,30 @@
 
 #### Самый простой вариант использования
 
-```javascript
-import { DefaultStressManager, Reduplicator } from 'reduplicator';
+##### Х\*ефикация
+
+```typescript
+import { DefaultStressManager, Hueficator } from 'reduplicator';
 
 const dict = new DefaultStressManager();
-const r = new Reduplicator(dict);
-r.reduplicate('собака'); // => х*яка
+
+const hueficator = new Hueficator(dict);
+hueficator.reduplicate('собака'); // => х*яка
+```
+
+##### Хренофикация
+
+```typescript
+import { DefaultStressManager, Hrenoficator } from 'reduplicator';
+
+const dict = new DefaultStressManager();
+
+const hrenoficator = new Hrenoficator(dict);
+hrenoficator.reduplicate('собака'); // => хренака
 ```
 
 #### Как это работает
-На то, какая будет гласная после префикса "ху" и сколько будет слогов в итоговом слове,
+На то, какая будет гласная после префикса "ху"/"хрен" и сколько будет слогов в итоговом слове,
 влияет ударение в исходном слове.
 Пример:
 * собáка -> х\*яка
@@ -65,10 +79,10 @@ r.reduplicate('собака'); // => х*яка
 редупликатору кастомные ударения в словах:
 
 ```javascript
-import { DynamicStressManager, Reduplicator } from 'reduplicator';
+import { DynamicStressManager, Hueficator } from 'reduplicator';
 
 const dict = new DynamicStressManager();
-const r = new Reduplicator(dict);
+const r = new Hueficator(dict);
 
 r.reduplicate('сОбака'); // => х*ёбака
 r.reduplicate('собАка'); // => х*яка
@@ -143,6 +157,19 @@ r.reduplicate('кот', {
   oneSyllableWordHandling: OneSyllableWordReduplicationMode.AddPrefix
 });
 ```
+
+#### Кастомный редупликатор
+
+Библиотека предоставляет возможность добавить свой редупликатор - например, "фигофикатор".
+
+Для этого нужно отнаследоваться от абстрактного класса `Reduplicator` и переопределить в нем четыре геттера:
+* `prefix` - возвращает общий префикс для редуплицированных слов; т.е. "ху", "хрен" (без последующей гласной);
+* `oneSyllableWordPrefix` - возвращает префикс для слов, состоящих из одного слога; нужен для
+ режима редупликации `OneSyllableWordReduplicationMode.AddPrefix`; пример - "х\*е", "хрено";
+* `stressedVowelPairs` - соответствие пар гласных в исходном слове и в редуплицированном слове для случаев, когда
+ гласная после префикса ударная; пример: собАка -> х\*Яка (т.е. а -> я);
+* `defaultPairVowel` - гласная, соответствующая гласным в исходном слове для случаев, когда гласная после префикса
+ безударная; пример: занАвеска -> хренОвеска (`defaultPairVowel` - 'о').
 
 ## Тесты
 `npm run test`

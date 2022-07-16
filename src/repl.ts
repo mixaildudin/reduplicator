@@ -10,7 +10,7 @@ const rl = readline.createInterface({
 const stressManager = new DynamicStressManager();
 const r = new Hueficator(stressManager);
 
-console.log('Reduplicator REPL. Type your word, then hit <Enter>.');
+console.log('Reduplicator REPL. Type your word, then hit <Enter> to huefy it.');
 
 rl.on('line', (input) => {
 	console.log(r.reduplicate(input));
