@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "ts": "tsc -w",
-    "test": "tsc && mocha ./lib/test/tests.js",
+    "test": "tsc && mocha ./lib/test --reduplicate",
     "repl": "tsc && node ./lib/repl.js",
     "prepublishOnly": "npm run test"
   },
