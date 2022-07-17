@@ -14,7 +14,7 @@ interface WordStress {
 export interface ReduplicatorConfig {
 	prefix: string;
 	defaultPairVowel?: Vowel;
-	stressedVowelPairs: Readonly<VowelPairs>;
+	stressedVowelPairs?: Readonly<VowelPairs>;
 }
 
 export class Reduplicator {
@@ -45,18 +45,23 @@ export class Reduplicator {
 			throw new Error('Configuration should contain a valid prefix');
 		}
 
-		const vowels = AlphabetHelper.getVowels();
-
-		// если префикс не содержит гласных, то можно не указывать defaultPairVowel
+		// если префикс не содержит гласных, то можно не указывать парные гласные, иначе - валидируем
 		if (this.getSyllableCount(c.prefix) > 0) {
-			if (!c.defaultPairVowel || !vowels.includes(c.defaultPairVowel)) {
+			if (!c.defaultPairVowel || !this.vowels.has(c.defaultPairVowel)) {
 				throw new Error('Configuration should contain a valid default pair vowel');
 			}
-		}
 
-		if (!c.stressedVowelPairs || typeof c.stressedVowelPairs !== 'object' ||
-			vowels.some(v => !(v in c.stressedVowelPairs))) {
-			throw new Error('Configuration should contain valid stressed vowel pairs');
+			if (!c.stressedVowelPairs || typeof c.stressedVowelPairs !== 'object') {
+				throw new Error('Configuration should contain valid stressed vowel pairs');
+			}
+
+			for (const v of this.vowels) {
+				const pair = c.stressedVowelPairs[v as Vowel];
+
+				if (!pair || !this.vowels.has(pair)) {
+					throw new Error(`Invalid pair vowel for the letter '${v}'`);
+				}
+			}
 		}
 	}
 
@@ -144,7 +149,7 @@ export class Reduplicator {
 		}
 
 		return (forStressedVowel
-			? this.configuration.stressedVowelPairs[vowel]
+			? this.configuration.stressedVowelPairs![vowel]
 			: this.configuration.defaultPairVowel!);
 	}
 
