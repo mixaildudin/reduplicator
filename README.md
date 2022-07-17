@@ -21,7 +21,7 @@
 * водоворот -> хреноворот
 
 #### Особенности
-* Два режима редупликации (х\*ефикация и хренофикация, легко добавить свой новый режим)
+* Два режима редупликации (х\*ефикация и хренофикация + легко добавить новый режим)
 * Нет внешних зависимостей
 * Синхронный API
 
@@ -125,13 +125,13 @@ JSON-файл со словарем должен иметь формат "сло
 
 ```javascript
 import * as path from 'path';
-import { DynamicStressManager, Reduplicator } from 'reduplicator';
+import { DynamicStressManager, Hueficator } from 'reduplicator';
 
 // допустим, путь к вашему словарю такой
 const customDictionaryPath = path.join(__dirname, './custom.json');
 
 const dict = new DynamicStressManager(customDictionaryPath, true);
-const r = new Reduplicator(dict);
+const r = new Hueficator(dict);
 r.reduplicate('сОбака'); // => х*ёбака
 ```
 
@@ -167,9 +167,9 @@ r.reduplicate('кот', {
 * `oneSyllableWordPrefix` - возвращает префикс для слов, состоящих из одного слога; нужен для
  режима редупликации `OneSyllableWordReduplicationMode.AddPrefix`; пример - "х\*е", "хрено";
 * `stressedVowelPairs` - соответствие пар гласных в исходном слове и в редуплицированном слове для случаев, когда
- гласная после префикса ударная; пример: собАка -> х\*Яка (т.е. а -> я);
+ гласная после префикса ударная; пример: соб**а**ка -> х\***я**ка (т.е. а -> я);
 * `defaultPairVowel` - гласная, соответствующая гласным в исходном слове для случаев, когда гласная после префикса
- безударная; пример: занАвеска -> хренОвеска (`defaultPairVowel` - 'о').
+ безударная; пример: зан**а**веска -> хрен**о**веска (`defaultPairVowel` - `'о'`).
 
 ## Тесты
 `npm run test`
