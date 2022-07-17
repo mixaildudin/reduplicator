@@ -3,31 +3,61 @@ import AlphabetHelper from './alphabetHelper';
 import {ReduplicatorOptions} from './reduplicatorOptions';
 import {OneSyllableWordReduplicationMode} from './oneSyllableWordReduplicationMode';
 
-export type Vowel = 'а' | 'е' | 'ё' | 'и' | 'о' | 'у' | 'ы' | 'э' | 'ю' | 'я';
-
-export type VowelPairs = Record<Vowel, Vowel>;
+type Vowel = 'а' | 'е' | 'ё' | 'и' | 'о' | 'у' | 'ы' | 'э' | 'ю' | 'я';
+type VowelPairs = Record<Vowel, Vowel>;
 
 interface WordStress {
 	letterIdx: number,
 	syllableIdx: number
 }
 
-export abstract class Reduplicator {
-	protected readonly vowels: Set<string>;
-	protected readonly consonants: Set<string>;
-	protected readonly dictionaryManager: StressManager;
-	protected readonly minWordLength = 2;
+export interface ReduplicatorConfig {
+	prefix: string;
+	defaultPairVowel?: Vowel;
+	stressedVowelPairs: Readonly<VowelPairs>;
+}
 
-	protected abstract get defaultPairVowel(): Vowel;
-	protected abstract get stressedVowelPairs(): Readonly<VowelPairs>;
-	protected abstract get oneSyllableWordPrefix(): string;
-	protected abstract get prefix(): string;
+export class Reduplicator {
+	private readonly vowels: Set<string>;
+	private readonly consonants: Set<string>;
+	private readonly minWordLength = 2;
 
-	protected constructor(dictionaryManager: StressManager) {
+	constructor(private readonly dictionaryManager: StressManager,
+				private readonly configuration: ReduplicatorConfig) {
+		if (!dictionaryManager) {
+			throw new Error('No dictionary manager specified');
+		}
+
+		if (!configuration) {
+			throw new Error('No configuration specified');
+		}
+
 		this.vowels = new Set<string>(AlphabetHelper.getVowels());
 		this.consonants = new Set<string>(AlphabetHelper.getConsonants());
 
-		this.dictionaryManager = dictionaryManager;
+		this.validateConfiguration();
+	}
+
+	public validateConfiguration() {
+		const c = this.configuration;
+
+		if (!c.prefix || typeof c.prefix !== 'string') {
+			throw new Error('Configuration should contain a valid prefix');
+		}
+
+		const vowels = AlphabetHelper.getVowels();
+
+		// если префикс не содержит гласных, то можно не указывать defaultPairVowel
+		if (this.getSyllableCount(c.prefix) > 0) {
+			if (!c.defaultPairVowel || !vowels.includes(c.defaultPairVowel)) {
+				throw new Error('Configuration should contain a valid default pair vowel');
+			}
+		}
+
+		if (!c.stressedVowelPairs || typeof c.stressedVowelPairs !== 'object' ||
+			vowels.some(v => !(v in c.stressedVowelPairs))) {
+			throw new Error('Configuration should contain valid stressed vowel pairs');
+		}
 	}
 
 	public reduplicate(word: string, options?: ReduplicatorOptions): string | null {
@@ -46,7 +76,7 @@ export abstract class Reduplicator {
 		if (syllableCount === 1) {
 			const mode = options?.oneSyllableWordHandling ?? OneSyllableWordReduplicationMode.Default;
 			if (mode === OneSyllableWordReduplicationMode.AddPrefix) {
-				return this.oneSyllableWordPrefix + lowercasedWord;
+				return this.configuration.prefix + this.configuration.defaultPairVowel + lowercasedWord;
 			}
 		}
 
@@ -69,7 +99,7 @@ export abstract class Reduplicator {
 
 			if (this.vowels.has(curLetter)) {
 				if (knownStressedLetterIdx == null || knownStressedLetterIdx === i || this.consonants.has(nextLetter)) {
-					return this.prefix + this.getVowelPair(curLetter as Vowel, knownStressedLetterIdx == null || knownStressedLetterIdx === i ) + wordLetters.slice(i + 1).join('');
+					return this.configuration.prefix + this.getVowelPair(curLetter as Vowel, knownStressedLetterIdx == null || knownStressedLetterIdx === i ) + wordLetters.slice(i + 1).join('');
 				}
 			}
 		}
@@ -78,34 +108,44 @@ export abstract class Reduplicator {
 	}
 
 	private reduplicateAdvanced(wordLetters: string[], stressInfo: WordStress): string {
-		const prefixSyllableCount = 2;
+		const prefixSyllableCount = this.getSyllableCount(this.configuration.prefix);
 
 		let letterNumber, syllableNumber = 0, vowel: Vowel | null = null;
 
-		// найдем гласную букву, соответствующую второму слогу
+		// найдем гласную букву, которая будет идти после префикса
 		for (letterNumber = 0; letterNumber < wordLetters.length; letterNumber++) {
 			if (this.vowels.has(wordLetters[letterNumber])) {
 				syllableNumber++;
 				vowel = wordLetters[letterNumber] as Vowel;
 			}
 
-			if (syllableNumber === prefixSyllableCount) {
+			if (syllableNumber === prefixSyllableCount + 1) {
 				break;
 			}
 		}
 
-		const pairVowel = this.getVowelPair(vowel!, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount - 1);
-		return this.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
+		if (!vowel) {
+			throw new Error('Vowel not found, something went wrong');
+		}
+
+		const pairVowel = this.getVowelPair(vowel, !stressInfo || stressInfo.syllableIdx === prefixSyllableCount);
+		return this.configuration.prefix + pairVowel + wordLetters.slice(letterNumber + 1).join('');
 	}
 
-	private getSyllableCount(wordLetters: string[]): number {
-		return wordLetters.filter(x => this.vowels.has(x.toLowerCase())).length;
+	private getSyllableCount(word: string | string[]): number {
+		const letters = Array.isArray(word) ? word : word.split('');
+		return letters.filter(x => this.vowels.has(x.toLowerCase())).length;
 	}
 
 	private getVowelPair(vowel: Vowel, forStressedVowel: boolean): string {
+		// если в префиксе нет гласных, то оставляем исходную, иначе подберем парную в зависимости от ударности
+		if (this.getSyllableCount(this.configuration.prefix) === 0) {
+			return vowel;
+		}
+
 		return (forStressedVowel
-			? this.stressedVowelPairs[vowel]
-			: this.defaultPairVowel);
+			? this.configuration.stressedVowelPairs[vowel]
+			: this.configuration.defaultPairVowel!);
 	}
 
 	private getStressInfo(word: string): WordStress | null {

@@ -1,37 +1,30 @@
-import {Reduplicator, Vowel, VowelPairs} from './reduplicator';
+import {Reduplicator} from './reduplicator';
 import {StressManager} from './interfaces/stressManager';
+import {ReduplicatorOptions} from './reduplicatorOptions';
 
-export class Hueficator extends Reduplicator {
+export class Hueficator {
+	private readonly redupicator: Reduplicator;
+	
 	constructor(dictionaryManager: StressManager) {
-		super(dictionaryManager);
+		this.redupicator = new Reduplicator(dictionaryManager, {
+			defaultPairVowel: 'е',
+			prefix: 'ху',
+			stressedVowelPairs: {
+				'а': 'я',
+				'е': 'е',
+				'ё': 'ё',
+				'и': 'и',
+				'о': 'ё',
+				'у': 'ю',
+				'ы': 'и',
+				'э': 'е',
+				'ю': 'ю',
+				'я': 'я'
+			}
+		});
 	}
 
-	private stressedPairs: Readonly<VowelPairs> = Object.freeze({
-		'а': 'я',
-		'е': 'е',
-		'ё': 'ё',
-		'и': 'и',
-		'о': 'ё',
-		'у': 'ю',
-		'ы': 'и',
-		'э': 'е',
-		'ю': 'ю',
-		'я': 'я'
-	});
-
-	protected get defaultPairVowel(): Vowel {
-		return 'е';
-	}
-
-	protected get stressedVowelPairs(): Readonly<VowelPairs> {
-		return this.stressedPairs;
-	}
-
-	protected get prefix() {
-		return 'ху';
-	}
-
-	protected get oneSyllableWordPrefix() {
-		return 'хуе';
+	public reduplicate(word: string, options?: ReduplicatorOptions): string | null {
+		return this.redupicator.reduplicate(word, options);
 	}
 }

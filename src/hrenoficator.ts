@@ -1,35 +1,30 @@
-import {Reduplicator, Vowel, VowelPairs} from './reduplicator';
+import {Reduplicator} from './reduplicator';
 import {StressManager} from './interfaces/stressManager';
+import {ReduplicatorOptions} from './reduplicatorOptions';
 
-export class Hrenoficator extends Reduplicator {
+export class Hrenoficator {
+	private readonly redupicator: Reduplicator;
+
 	constructor(dictionaryManager: StressManager) {
-		super(dictionaryManager);
-	}
-
-	protected get stressedVowelPairs(): Readonly<VowelPairs> {
-		return Object.freeze({
-			'а': 'а',
-			'е': 'е',
-			'ё': 'ё',
-			'и': 'и',
-			'о': 'о',
-			'у': 'у',
-			'ы': 'ы',
-			'э': 'э',
-			'ю': 'ю',
-			'я': 'я'
+		this.redupicator = new Reduplicator(dictionaryManager, {
+			defaultPairVowel: 'о',
+			prefix: 'хрен',
+			stressedVowelPairs: {
+				'а': 'а',
+				'е': 'е',
+				'ё': 'ё',
+				'и': 'и',
+				'о': 'о',
+				'у': 'у',
+				'ы': 'ы',
+				'э': 'э',
+				'ю': 'ю',
+				'я': 'я'
+			}
 		});
 	}
 
-	protected get defaultPairVowel(): Vowel {
-		return 'о';
-	}
-
-	protected get prefix(): string {
-		return 'хрен';
-	}
-
-	protected get oneSyllableWordPrefix(): string {
-		return 'хрено';
+	public reduplicate(word: string, options?: ReduplicatorOptions): string | null {
+		return this.redupicator.reduplicate(word, options);
 	}
 }

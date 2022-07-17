@@ -1,6 +1,8 @@
 import * as readline from 'readline';
 import {DynamicStressManager} from './dynamicStressManager';
 import {Hueficator} from './hueficator';
+import {Reduplicator} from './reduplicator';
+import {Hrenoficator} from './hrenoficator';
 
 const rl = readline.createInterface({
 	input: process.stdin,
